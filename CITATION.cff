@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+message: "If you use this dataset, please cite it as below."
+title: "Agent Spending Controls Crosswalk (2026)"
+version: "1.0.0"
+date-released: 2026-09-29
+license: CC-BY-4.0
+type: dataset
+authors:
+  - name: "PinkWallet"
+repository-code: "https://github.com/Pink-Agentic-Payments/agent-spending-controls-crosswalk"
+url: "https://github.com/Pink-Agentic-Payments/agent-spending-controls-crosswalk"
+abstract: "Vendor-neutral, quoted crosswalk of 14 payment providers/protocols (AP2, Stripe Issuing, Privacy.com, Lithic, AgentCard, Crossmint, Coinbase CDP, Circle, Tempo, Payman, Skyfire, x402, Visa Intelligent Commerce, Mastercard Agent Pay): how each caps AI agent spending, exact field names, units, and enforcement points, sourced to a verbatim quote."
+keywords:
+  - agentic-payments
+  - ai-agents
+  - ap2
+  - developer-reference
+  - fintech
+  - mcp
+  - payment-protocols
+  - spending-limits
