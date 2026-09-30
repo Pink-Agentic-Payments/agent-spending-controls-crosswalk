@@ -2,6 +2,8 @@
 
 Every payment provider and protocol that lets you cap what an AI agent can spend uses its own field names, units, and enforcement point — there is no shared standard. This crosswalk maps 14 providers/protocols (AP2, Stripe Issuing, Privacy.com, Lithic, AgentCard, Crossmint, Coinbase CDP, Circle, Tempo, Payman, Skyfire, x402, Visa Intelligent Commerce, Mastercard Agent Pay) to the exact field or setting they document for amount caps, allowlists, category blocks, and approval requirements, each with a quoted source.
 
+Also available on Hugging Face: https://huggingface.co/datasets/Agentic-Payment/agent-spending-controls-crosswalk (with the dataset viewer).
+
 ## How to read the table
 
 `crosswalk.csv` has one row per control (a provider may have several: a per-transaction cap, a merchant lock, an approval threshold, etc.). Columns:
