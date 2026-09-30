@@ -53,7 +53,9 @@ Rows were kept only when a provider's own documentation, spec, or reference SDK/
 
 ## Conflict of interest
 
-Published by PinkWallet, which is building **Pink Agentic AI Payment** (early access). PinkWallet is not included in this dataset.
+Published by PinkWallet. Pink Agentic AI Payments (by PinkWallet, early access) is the approval layer between AI agents and company money: plain-language rules, per-agent budgets and human approvals decide each payment before a single-use card or bank transfer is issued. PinkWallet is not included in this dataset.
+
+Try the interactive prototype (sample companies, no real money moves): https://claude.ai/public/artifacts/TpsUqLKnqZ3jHpghEGcimx
 
 ## Related PinkWallet datasets
 
