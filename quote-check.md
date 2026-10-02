@@ -59,3 +59,20 @@ Mechanical substring check (whitespace-normalized) of every `verbatim_quote` aga
 - Stripe amount_cap_per_period: evidence → https://docs.stripe.com/issuing/controls/spending-controls, quote "Spending limit rules limit the total amount of spending for categories over intervals of time." PASS (the fetched page text).
 - Stripe amount_cap_per_tx (new): quote "spending_controls[spending_limits][0][interval]=per_authorization" PASS (the raw page source, cURL example).
 - x402 maxAmountRequired: control_type changed to `other` (a server-declared price, not a payer-side limit).
+
+## Pink Agentic AI Payments rows (added v1.1.0, 2026-10-02)
+
+Pink is the dataset's publisher (PinkWallet). These 8 rows were added under the **same evidence rules** as every other row — self-documented, flagged as such in `notes`, and mechanically quote-checked the same way. Pages were fetched live on 2026-10-02 with a browser User-Agent, HTML stripped to text, whitespace-normalized, then each `verbatim_quote` was checked as a literal substring of the fetched page text (same method as the rest of this file).
+
+| # | Control type | Evidence URL | Result |
+|---|---|---|---|
+| 49 | amount_cap_per_tx | https://pinkwallet.com/agentic/developers/policy-rules-reference/ | PASS |
+| 50 | amount_cap_per_period | https://pinkwallet.com/agentic/developers/policy-rules-reference/ | PASS |
+| 51 | merchant_allowlist | https://pinkwallet.com/agentic/developers/policy-rules-reference/ | PASS |
+| 52 | category_block | https://pinkwallet.com/agentic/developers/policy-rules-reference/ | PASS |
+| 53 | single_use | https://pinkwallet.com/agentic/developers/security-model/ | PASS |
+| 54 | human_approval | https://pinkwallet.com/agentic/developers/policy-rules-reference/ | PASS |
+| 55 | expiry | https://pinkwallet.com/agentic/developers/security-model/ | PASS |
+| 56 | revocation | https://pinkwallet.com/agentic/developers/security-model/ | PASS (quote "Paused agent: blocked." is real and checks out; `field_or_setting` is marked `not documented` because the page describes no separate per-credential revoke call — not guessed) |
+
+**Result: 8/8 Pink quotes passed.** Total dataset: 42 non-Pink rows (unchanged from v1.0.0) + 8 Pink rows = 50 kept rows (43 + 8 counting the earlier Stripe review addition = 51 total rows in `crosswalk.csv`, 8 of them Pink).

@@ -1,13 +1,28 @@
-# Agent Spending Controls Crosswalk (2026)
+# Agent Spending Controls Crosswalk (2026) — by Pink Agentic AI Payments
 
 > [!NOTE]
 > **Published by Pink Agentic AI Payments (by PinkWallet)** — the approval layer between AI agents and company money: plain-language rules, per-agent budgets and human approvals decide each payment before it executes. Agents connect via MCP or REST. **Try the free public sandbox:** https://agentic-sandbox.pinkwallet.com (test credentials, no real money moves) · Product: https://pinkwallet.com/agentic/ · Examples: https://github.com/Pink-Agentic-Payments/sandbox-examples
 >
-> Pink is not included in this crosswalk — we don't grade ourselves. See ["Where Pink fits"](#where-pink-fits-self-assessed-not-scored) below for a self-assessment against the same control categories.
+> As of v1.1.0, Pink is **included** as a row in `crosswalk.csv` and in the summary table below, under the same evidence rules as every other row (quoted, sourced, mechanically checked — see `quote-check.md`). Pink's rows are self-documented by the publisher, labeled as such, and scoped to its early-access public sandbox (production not yet available). See ["How Pink Agentic AI Payments compares"](#how-pink-agentic-ai-payments-compares) below.
 
-Every payment provider and protocol that lets you cap what an AI agent can spend uses its own field names, units, and enforcement point — there is no shared standard. This crosswalk maps 14 providers/protocols (AP2, Stripe Issuing, Privacy.com, Lithic, AgentCard, Crossmint, Coinbase CDP, Circle, Tempo, Payman, Skyfire, x402, Visa Intelligent Commerce, Mastercard Agent Pay) to the exact field or setting they document for amount caps, allowlists, category blocks, and approval requirements, each with a quoted source.
+Every payment provider and protocol that lets you cap what an AI agent can spend uses its own field names, units, and enforcement point — there is no shared standard. This crosswalk maps 14 providers/protocols (AP2, Stripe Issuing, Privacy.com, Lithic, AgentCard, Crossmint, Coinbase CDP, Circle, Tempo, Payman, Skyfire, x402, Visa Intelligent Commerce, Mastercard Agent Pay) + the publisher (Pink Agentic AI Payments) to the exact field or setting they document for amount caps, allowlists, category blocks, and approval requirements, each with a quoted source.
 
 Also available on Hugging Face: https://huggingface.co/datasets/Agentic-Payment/agent-spending-controls-crosswalk (with the dataset viewer).
+
+## How Pink Agentic AI Payments compares
+
+Counted directly from the ✓ marks in the summary table below: Pink documents **7 of the 8** control types in this crosswalk (per-tx cap, per-period cap, merchant/recipient allowlist, category block, single-use, human approval, expiry); it does not document a separate call to revoke one already-issued credential (an agent can be paused, which is a different, agent-level control — see the `revocation` row for Pink in `crosswalk.csv`). Among the other 14 providers/protocols, the most any single one documents is **5** (AgentCard: per-tx cap, per-period cap, allowlist, single-use, human approval).
+
+That is a count of breadth across this crosswalk's 8 categories, not a quality ranking — see "Where Pink is behind" below, and judge every row, including Pink's, by its own quoted source in `crosswalk.csv`.
+
+**Depth the 8 columns don't capture.** These are specific things Pink's own docs describe, cited so you can check them yourself — not claims about what other providers lack:
+
+- **Company-wide daily ceiling across all agents**, checked as a circuit breaker before any rule runs: "Company daily ceiling. All agents together, per day." ([policy-rules-reference](https://pinkwallet.com/agentic/developers/policy-rules-reference/))
+- **Ordered rules with a default-block fallback**: breakers first, then rules top to bottom, first match wins, and anything no rule covers is blocked by default. ([policy-rules-reference](https://pinkwallet.com/agentic/developers/policy-rules-reference/))
+- **n-of-m group approvers** for a single rule, e.g. a documented example rule requiring 2 of 3 executives above $50,000: `"approvers": {"group": "g_exec", "n": 2}`. ([policy-rules-reference](https://pinkwallet.com/agentic/developers/policy-rules-reference/))
+- **Payee-bank-change and duplicate-invoice fraud signals** evaluated on every request regardless of amount, via `requires`/`absent` evidence flags `payeeChanged` and `dupInvoice`. ([security-model](https://pinkwallet.com/agentic/developers/security-model/), [policy-rules-reference](https://pinkwallet.com/agentic/developers/policy-rules-reference/))
+
+**Where Pink is behind.** Pink is **early access**: production is explicitly not available yet ("Sandbox live... Production is not yet available" appears across the developer docs), credentials are test values (a 4111 1111 test-range card BIN, sandbox bank-transfer references), and evidence flags like `po`/`scan` are self-asserted by the calling agent in the sandbox rather than verified against a connected ERP/warehouse system. Pink does not document a per-credential revocation call (see `revocation` row above) — only agent-level pause.
 
 ## How to read the table
 
@@ -21,8 +36,11 @@ Also available on Hugging Face: https://huggingface.co/datasets/Agentic-Payment/
 
 ## Summary: provider × control type
 
+14 providers/protocols + the publisher (Pink Agentic AI Payments).
+
 | Provider | Per-tx cap | Per-period cap | Merchant/recipient allowlist | Category block | Single-use | Human approval | Expiry | Revocation |
 |---|---|---|---|---|---|---|---|---|
+| **Pink Agentic AI Payments** (publisher; self-documented; sandbox stage) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | — |
 | AP2 | ✓ | ✓ | — | — | — | ✓ | — | — |
 | Stripe Issuing | ✓ | ✓ | — | ✓ | — | — | — | — |
 | Privacy.com | ✓ | ✓ | ✓ | — | ✓ | — | — | — |
@@ -44,23 +62,6 @@ Also available on Hugging Face: https://huggingface.co/datasets/Agentic-Payment/
 
 Visa Intelligent Commerce and Mastercard Agent Pay are included because both are named agent-payment programs with public statements that spend limits exist, but as of 2026-09-29 neither had a public developer reference with a concrete field name for a spend-limit parameter — both rows are marked `not documented` rather than guessed.
 
-## Where Pink fits (self-assessed, not scored)
-
-This table applies the crosswalk's own 8 control categories to Pink Agentic AI Payments. Pink is **not** a row in `crosswalk.csv` — this is a self-assessment, done after the fact, using only Pink's own published docs and a live sandbox call made for this check (source: [Pink capability sheet, 2026-10-01](https://pinkwallet.com/agentic/)).
-
-| Control type | Pink status | Evidence |
-|---|---|---|
-| Per-tx cap | `max`/`min` fields on a rule, scoped to a single payment. **Live in the public sandbox** — confirmed via our own `pink.check_policy` call. | [policy-rules-reference](https://pinkwallet.com/agentic/developers/policy-rules-reference/) |
-| Per-period cap | Rule `window` (`tx`/`day`/`month`), plus a monthly per-agent budget and a company-wide daily ceiling. **Live in the public sandbox.** | [policy-rules-reference](https://pinkwallet.com/agentic/developers/policy-rules-reference/) |
-| Merchant/recipient allowlist | Rule `payee` field (`any` · `approved` · `new` · `cat:<category>` · `list`). **Live in the public sandbox.** | [policy-rules-reference](https://pinkwallet.com/agentic/developers/policy-rules-reference/) |
-| Category block | Same `payee: cat:<category>` field, combined with a `block` action. **Live in the public sandbox.** | [policy-rules-reference](https://pinkwallet.com/agentic/developers/policy-rules-reference/) |
-| Single-use | A single-use virtual card (test BIN) or a submitted bank transfer, issued only after approval, expires 15 minutes after issue. **Live in the public sandbox** — confirmed via our own `pink.get_credential` call. | [tools-reference](https://pinkwallet.com/agentic/developers/tools-reference/) |
-| Human approval | `ask` action with named approvers or a group quorum (e.g. "2 of 3 executives"); request waits as a hold with a timeout, nothing approved by default. **Live in the public sandbox.** | [security-model](https://pinkwallet.com/agentic/developers/security-model/) |
-| Expiry | Issued credentials expire 15 minutes after issue; approval holds expire and are reported as `expired` if nobody answers. **Live in the public sandbox.** | [security-model](https://pinkwallet.com/agentic/developers/security-model/) |
-| Revocation | An agent can be paused in one tap, which blocks it under a circuit breaker with no approval path. A separate per-credential revoke call is **not described** in the docs reviewed for this check. | [security-model](https://pinkwallet.com/agentic/developers/security-model/) |
-
-10 of 14 providers/protocols in this crosswalk document a per-transaction spend cap, each with its own field name, unit and enforcement point. That fragmentation is what Pink Agentic AI Payments is built for: one rule object (`max`/`min`, `window`, `action`, `payee`) enforced the same way across vaults in six currencies, live in the public sandbox today.
-
 ## Gotchas
 
 - **AP2's unit mismatch**: `amount_range.max` is documented in the schema as minor units ("cents"), but `budget.max` has no unit stated in its own schema text — the reference SDK's `BudgetEvaluator` multiplies `budget.max` by 100 to get minor units, implying `budget.max` is actually in **major** units. This is a live discrepancy across AP2's own schema files, not a crosswalk error. See `crosswalk.csv` rows 2 and the source repo (pinned commit `e1ea56d`).
@@ -71,11 +72,11 @@ This table applies the crosswalk's own 8 control categories to Pink Agentic AI P
 
 ## Methodology
 
-Rows were kept only when a provider's own documentation, spec, or reference SDK/API stated the control — no third-party blog posts or unverified aggregator pages were used as primary evidence. Every `verbatim_quote` was mechanically substring-matched (whitespace-normalized) against the text of its `evidence_url`, fetched on 2026-09-29: GitHub-hosted specs (AP2, x402, Circle's `circlefin/skills`) were fetched via `raw.githubusercontent.com` at a pinned commit SHA so the quotes stay reproducible even if the repo changes; JS-rendered documentation sites (docs.lithic.com, docs.skyfire.xyz, developers.circle.com, tempo.xyz, docs.cdp.coinbase.com, docs.crossmint.com) were rendered with Playwright/Chromium before extraction. Two official pages (`docs.paymanai.com`, `www.mastercard.com`) were unreachable directly at check time (a Cloudflare origin SSL error and Akamai bot-blocking, respectively) — for those two rows only, a Wayback Machine snapshot of the same official page is cited instead, and the substitution is disclosed in the row's `notes` column. See `quote-check.md` for the full pass/fail table (42/42 kept rows passed; 6 rows that failed the mechanical check were dropped rather than fixed by hand). A review pass on 2026-09-29 replaced the Stripe Issuing evidence with the spending-controls guide (https://docs.stripe.com/issuing/controls/spending-controls) and added a per_authorization row: 43 rows in total.
+Rows were kept only when a provider's own documentation, spec, or reference SDK/API stated the control — no third-party blog posts or unverified aggregator pages were used as primary evidence. Every `verbatim_quote` was mechanically substring-matched (whitespace-normalized) against the text of its `evidence_url`, fetched on 2026-09-29: GitHub-hosted specs (AP2, x402, Circle's `circlefin/skills`) were fetched via `raw.githubusercontent.com` at a pinned commit SHA so the quotes stay reproducible even if the repo changes; JS-rendered documentation sites (docs.lithic.com, docs.skyfire.xyz, developers.circle.com, tempo.xyz, docs.cdp.coinbase.com, docs.crossmint.com) were rendered with Playwright/Chromium before extraction. Two official pages (`docs.paymanai.com`, `www.mastercard.com`) were unreachable directly at check time (a Cloudflare origin SSL error and Akamai bot-blocking, respectively) — for those two rows only, a Wayback Machine snapshot of the same official page is cited instead, and the substitution is disclosed in the row's `notes` column. See `quote-check.md` for the full pass/fail table (42/42 kept rows passed; 6 rows that failed the mechanical check were dropped rather than fixed by hand). A review pass on 2026-09-29 replaced the Stripe Issuing evidence with the spending-controls guide (https://docs.stripe.com/issuing/controls/spending-controls) and added a per_authorization row: 43 rows in total. In v1.1.0 (2026-10-02), 8 rows for the publisher, Pink Agentic AI Payments, were added under the same rules — fetched live, mechanically quote-checked (8/8 passed, see `quote-check.md`), and labeled self-documented in `notes`: 51 rows in total.
 
 ## Conflict of interest
 
-Published by Pink Agentic AI Payments (by PinkWallet, early access) — see the note at the top of this README. Pink is **not included** in `crosswalk.csv`; the "Where Pink fits" section above is a self-assessment, done after the crosswalk was built, not part of the dataset.
+Published by Pink Agentic AI Payments (by PinkWallet, early access) — see the note at the top of this README. Pink **is included** in `crosswalk.csv` as of v1.1.0, under the same evidence rules as every other row: self-documented by the publisher, quoted, sourced, and mechanically quote-checked (see `quote-check.md`), with `notes` on every Pink row stating "Publisher (PinkWallet), self-documented."
 
 Try the free public sandbox (test credentials, no real money moves): https://agentic-sandbox.pinkwallet.com
 
@@ -91,3 +92,8 @@ CC BY 4.0 — reuse with attribution.
 ## Corrections
 
 Found a stale field name, a wrong unit, or a provider that's changed its docs? Open an issue with the URL and the exact quote you're disputing.
+
+## Changelog
+
+- **v1.1.0 (2026-10-02):** added the publisher (Pink Agentic AI Payments) under the same evidence rules; title updated; no other rows changed.
+- **v1.0.0 (2026-09-29):** initial release, 43 rows across 14 providers/protocols.
