@@ -62,6 +62,53 @@ That is a count of breadth across this crosswalk's 8 categories, not a quality r
 
 Visa Intelligent Commerce and Mastercard Agent Pay are included because both are named agent-payment programs with public statements that spend limits exist, but as of 2026-09-29 neither had a public developer reference with a concrete field name for a spend-limit parameter — both rows are marked `not documented` rather than guessed.
 
+### How Pink does it, per control type
+
+Sourced from [policy-rules-reference](https://pinkwallet.com/agentic/developers/policy-rules-reference/) and [security-model](https://pinkwallet.com/agentic/developers/security-model/), consistent with Pink's row in the table above:
+
+| Control type | Pink | How |
+|---|---|---|
+| Per-tx cap | ✓ | A rule's `amount.max` with `window: "tx"` — e.g. a per-payment cap on an agent. |
+| Per-period cap | ✓ | Per-agent monthly budget, plus a company-wide daily ceiling checked across all agents before any rule runs. |
+| Merchant/recipient allowlist | ✓ | The rule `payee` field: `any` \| `approved` \| `new` \| `cat:<category>` \| an explicit list. |
+| Category block | ✓ | A `cat:blocked` payee match with `action: "block"` — e.g. the documented rule "Never: gift cards, cash-like, crypto." |
+| Single-use | ✓ | Approved payments return a single-use virtual card or bank-transfer credential locked to the payee and the amount. |
+| Human approval | ✓ | An `action: "ask"` rule with named approvers or an n-of-m quorum (e.g. "2 of 3 executives" over $50,000). |
+| Expiry | ✓ | Issued credentials expire 15 minutes after issue. |
+| Revocation | — | Not documented as a separate per-credential revoke call; Pink documents pausing the agent itself, which is a different, agent-level control (see "Where Pink is behind" above). |
+
+## Try Pink Agentic AI Payments in 2 minutes
+
+Create a free sandbox workspace with one call, no sales contact:
+
+```
+curl -X POST https://agentic-sandbox.pinkwallet.com/v1/sandbox/workspaces \
+  -H "Content-Type: application/json" \
+  -d '{"company":"Your Company","email":"","template":"coffee"}'
+```
+
+This report's companion dataset, [agentic-payments-readiness](https://github.com/Pink-Agentic-Payments/agentic-payments-readiness#try-pink-agentic-ai-payments-in-2-minutes), ran this live on 2026-10-02 and documents the full walkthrough: connecting an agent via MCP, and the three real decision outcomes (`allowed` / `pending_human` / `blocked`) with trimmed sandbox responses. Sandbox, test credentials, no real money moves — production is not yet available.
+
+## How Pink decides a payment
+
+Quoted from [policy-rules-reference](https://pinkwallet.com/agentic/developers/policy-rules-reference/): "A policy is an ordered list of rules plus three circuit breakers. Every payment request is checked the same way: breakers first, then rules top to bottom, first match decides, and anything no rule covers is blocked."
+
+1. Agent registered?
+2. Agent active (not paused)?
+3. Monthly budget not exceeded?
+4. Company daily ceiling not exceeded (all agents together)?
+5. Vault balance sufficient?
+6. Rules, top to bottom — first match wins.
+7. Default: block.
+
+## Pink console (sample data)
+
+![Policy rules editor](https://pinkwallet.com/agentic/img/console-policies.webp)
+*Policy rules editor, shown in evaluation order (Pink console, sample data).*
+
+![Pending approvals queue](https://pinkwallet.com/agentic/img/console-approvals.webp)
+*Pending "ask a person" approvals (Pink console, sample data).*
+
 ## Gotchas
 
 - **AP2's unit mismatch**: `amount_range.max` is documented in the schema as minor units ("cents"), but `budget.max` has no unit stated in its own schema text — the reference SDK's `BudgetEvaluator` multiplies `budget.max` by 100 to get minor units, implying `budget.max` is actually in **major** units. This is a live discrepancy across AP2's own schema files, not a crosswalk error. See `crosswalk.csv` rows 2 and the source repo (pinned commit `e1ea56d`).
@@ -95,5 +142,6 @@ Found a stale field name, a wrong unit, or a provider that's changed its docs? O
 
 ## Changelog
 
+- **v1.2.0 (2026-10-02):** expanded publisher (Pink) sections — a "How Pink does it" note per control type under the summary table, a 2-minute trial block, the decision order, and 2 console screenshots. No data changes for other providers.
 - **v1.1.0 (2026-10-02):** added the publisher (Pink Agentic AI Payments) under the same evidence rules; title updated; no other rows changed.
 - **v1.0.0 (2026-09-29):** initial release, 43 rows across 14 providers/protocols.
