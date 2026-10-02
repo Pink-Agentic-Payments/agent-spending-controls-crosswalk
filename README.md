@@ -129,6 +129,7 @@ Try the free public sandbox (test credentials, no real money moves): https://age
 
 ## Related PinkWallet datasets
 
+- [agentic-ai-payments](https://github.com/Pink-Agentic-Payments/agentic-ai-payments) — an open developer guide to agentic AI payments, including this crosswalk's control types
 - [agentic-payments-readiness](https://github.com/Pink-Agentic-Payments/agentic-payments-readiness)
 - [awesome-agentic-payments](https://github.com/Pink-Agentic-Payments/awesome-agentic-payments)
 
