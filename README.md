@@ -1,5 +1,10 @@
 # Agent Spending Controls Crosswalk (2026)
 
+> [!NOTE]
+> **Published by Pink Agentic AI Payments (by PinkWallet)** — the approval layer between AI agents and company money: plain-language rules, per-agent budgets and human approvals decide each payment before it executes. Agents connect via MCP or REST. **Try the free public sandbox:** https://agentic-sandbox.pinkwallet.com (test credentials, no real money moves) · Product: https://pinkwallet.com/agentic/ · Examples: https://github.com/Pink-Agentic-Payments/sandbox-examples
+>
+> Pink is not included in this crosswalk — we don't grade ourselves. See ["Where Pink fits"](#where-pink-fits-self-assessed-not-scored) below for a self-assessment against the same control categories.
+
 Every payment provider and protocol that lets you cap what an AI agent can spend uses its own field names, units, and enforcement point — there is no shared standard. This crosswalk maps 14 providers/protocols (AP2, Stripe Issuing, Privacy.com, Lithic, AgentCard, Crossmint, Coinbase CDP, Circle, Tempo, Payman, Skyfire, x402, Visa Intelligent Commerce, Mastercard Agent Pay) to the exact field or setting they document for amount caps, allowlists, category blocks, and approval requirements, each with a quoted source.
 
 Also available on Hugging Face: https://huggingface.co/datasets/Agentic-Payment/agent-spending-controls-crosswalk (with the dataset viewer).
@@ -39,6 +44,23 @@ Also available on Hugging Face: https://huggingface.co/datasets/Agentic-Payment/
 
 Visa Intelligent Commerce and Mastercard Agent Pay are included because both are named agent-payment programs with public statements that spend limits exist, but as of 2026-09-29 neither had a public developer reference with a concrete field name for a spend-limit parameter — both rows are marked `not documented` rather than guessed.
 
+## Where Pink fits (self-assessed, not scored)
+
+This table applies the crosswalk's own 8 control categories to Pink Agentic AI Payments. Pink is **not** a row in `crosswalk.csv` — this is a self-assessment, done after the fact, using only Pink's own published docs and a live sandbox call made for this check (source: [Pink capability sheet, 2026-10-01](https://pinkwallet.com/agentic/)).
+
+| Control type | Pink status | Evidence |
+|---|---|---|
+| Per-tx cap | `max`/`min` fields on a rule, scoped to a single payment. **Live in the public sandbox** — confirmed via our own `pink.check_policy` call. | [policy-rules-reference](https://pinkwallet.com/agentic/developers/policy-rules-reference/) |
+| Per-period cap | Rule `window` (`tx`/`day`/`month`), plus a monthly per-agent budget and a company-wide daily ceiling. **Live in the public sandbox.** | [policy-rules-reference](https://pinkwallet.com/agentic/developers/policy-rules-reference/) |
+| Merchant/recipient allowlist | Rule `payee` field (`any` · `approved` · `new` · `cat:<category>` · `list`). **Live in the public sandbox.** | [policy-rules-reference](https://pinkwallet.com/agentic/developers/policy-rules-reference/) |
+| Category block | Same `payee: cat:<category>` field, combined with a `block` action. **Live in the public sandbox.** | [policy-rules-reference](https://pinkwallet.com/agentic/developers/policy-rules-reference/) |
+| Single-use | A single-use virtual card (test BIN) or a submitted bank transfer, issued only after approval, expires 15 minutes after issue. **Live in the public sandbox** — confirmed via our own `pink.get_credential` call. | [tools-reference](https://pinkwallet.com/agentic/developers/tools-reference/) |
+| Human approval | `ask` action with named approvers or a group quorum (e.g. "2 of 3 executives"); request waits as a hold with a timeout, nothing approved by default. **Live in the public sandbox.** | [security-model](https://pinkwallet.com/agentic/developers/security-model/) |
+| Expiry | Issued credentials expire 15 minutes after issue; approval holds expire and are reported as `expired` if nobody answers. **Live in the public sandbox.** | [security-model](https://pinkwallet.com/agentic/developers/security-model/) |
+| Revocation | An agent can be paused in one tap, which blocks it under a circuit breaker with no approval path. A separate per-credential revoke call is **not described** in the docs reviewed for this check. | [security-model](https://pinkwallet.com/agentic/developers/security-model/) |
+
+10 of 14 providers/protocols in this crosswalk document a per-transaction spend cap, each with its own field name, unit and enforcement point. That fragmentation is what Pink Agentic AI Payments is built for: one rule object (`max`/`min`, `window`, `action`, `payee`) enforced the same way across vaults in six currencies, live in the public sandbox today.
+
 ## Gotchas
 
 - **AP2's unit mismatch**: `amount_range.max` is documented in the schema as minor units ("cents"), but `budget.max` has no unit stated in its own schema text — the reference SDK's `BudgetEvaluator` multiplies `budget.max` by 100 to get minor units, implying `budget.max` is actually in **major** units. This is a live discrepancy across AP2's own schema files, not a crosswalk error. See `crosswalk.csv` rows 2 and the source repo (pinned commit `e1ea56d`).
@@ -53,9 +75,9 @@ Rows were kept only when a provider's own documentation, spec, or reference SDK/
 
 ## Conflict of interest
 
-Published by PinkWallet. Pink Agentic AI Payments (by PinkWallet, early access) is the approval layer between AI agents and company money: plain-language rules, per-agent budgets and human approvals decide each payment before a single-use card or bank transfer is issued. PinkWallet is not included in this dataset.
+Published by Pink Agentic AI Payments (by PinkWallet, early access) — see the note at the top of this README. Pink is **not included** in `crosswalk.csv`; the "Where Pink fits" section above is a self-assessment, done after the crosswalk was built, not part of the dataset.
 
-Try the interactive prototype (sample companies, no real money moves): https://claude.ai/public/artifacts/TpsUqLKnqZ3jHpghEGcimx
+Try the free public sandbox (test credentials, no real money moves): https://agentic-sandbox.pinkwallet.com
 
 ## Related PinkWallet datasets
 
